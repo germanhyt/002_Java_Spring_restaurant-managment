@@ -35,13 +35,18 @@ public class Category implements java.io.Serializable {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     private String name;
     private String description;
+
     @Column(name = "url_key")
     private String urlKey;
+
     private String state;
+
     @Column(name = "created_at")
     private LocalDateTime createAt;
+
     @Column(name = "updated_at")
     private LocalDateTime updateTime;
 
