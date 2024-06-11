@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 // JPA Annotations
 @Entity
 @Table(name = "categories")
-public class Category implements java.io.Serializable {
+public class Category implements Serializable {
     // Attributes
     @Id
     @Column(name = "id")
