@@ -1,4 +1,4 @@
-package com.ironman.restaurantmanagment.expose.controller.exception;
+package com.ironman.restaurantmanagment.expose.exception;
 
 
 
