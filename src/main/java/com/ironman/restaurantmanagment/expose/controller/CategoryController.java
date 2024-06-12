@@ -1,5 +1,7 @@
 package com.ironman.restaurantmanagment.expose.controller;
 
+import com.ironman.restaurantmanagment.application.dto.category.CategoryDto;
+import com.ironman.restaurantmanagment.application.dto.category.CategorySmallDto;
 import com.ironman.restaurantmanagment.application.service.CategoryService;
 import com.ironman.restaurantmanagment.persistence.entity.Category;
 import com.ironman.restaurantmanagment.persistence.repository.CategoryRepository;
@@ -23,12 +25,12 @@ public class CategoryController {
     }
 
     @GetMapping
-    public List<Category> findAll() {
+    public List<CategorySmallDto> findAll() {
         return categoryService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Category findById(@PathVariable("id") Long id) {
+    public CategoryDto findById(@PathVariable("id") Long id) {
         return categoryService.findById(id);
     }
 
