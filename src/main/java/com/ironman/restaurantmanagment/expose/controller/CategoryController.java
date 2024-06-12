@@ -7,6 +7,7 @@ import com.ironman.restaurantmanagment.application.dto.category.CategorySmallDto
 import com.ironman.restaurantmanagment.application.service.CategoryService;
 import com.ironman.restaurantmanagment.persistence.entity.Category;
 import com.ironman.restaurantmanagment.persistence.repository.CategoryRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,13 +40,13 @@ public class CategoryController {
     }
 
     @PostMapping
-    public CategorySavedDto create(@RequestBody CategoryBodyDto categoryBodyDto) {
+    public CategorySavedDto create(@Valid @RequestBody CategoryBodyDto categoryBodyDto) {
         return categoryService.create(categoryBodyDto);
     }
 
     //    @PathVariable("id") // Para obtener el id de la URL
     @PutMapping("/{id}")
-    public CategorySavedDto update(@PathVariable("id") Long id, @RequestBody CategoryBodyDto categoryBodyDto) {
+    public CategorySavedDto update(@PathVariable("id") Long id,@Valid @RequestBody CategoryBodyDto categoryBodyDto) {
         return categoryService.update(id, categoryBodyDto);
     }
 
