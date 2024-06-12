@@ -64,23 +64,13 @@ public class CategoryController {
         return categoryService.fndByName(name);
     }
 
-//    private CategoryRepository categoryRepository;
-//
-//    public CategoryController(CategoryRepository categoryRepository) {
-//        this.categoryRepository = categoryRepository;
-//    }
-//
-//    @GetMapping
-//    public List<Category> findAll() {
-//
-//        List<Category> categories= (List<Category>) categoryRepository.findAll();
-//        return categories;
-//    }
-//
-//    @GetMapping("/{id}")
-//    public Category findById(@PathVariable("id") Long id){
-//        Category category= categoryRepository.findById(id).orElse(null);
-//        return category;
-//    }
+    @GetMapping("/filters")
+    public List<CategorySmallDto> findAllByFilters(@RequestParam(value = "name", required = false) String name,
+                                                   @RequestParam(value = "state", required = false) String state) {
+
+        return categoryService.findAllByFilters(name, state);
+    }
+
+
 
 }

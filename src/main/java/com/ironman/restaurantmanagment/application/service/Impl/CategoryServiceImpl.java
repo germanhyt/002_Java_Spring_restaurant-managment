@@ -93,5 +93,13 @@ public class CategoryServiceImpl implements CategoryService {
                 .toList();
     }
 
+    @Override
+    public List<CategorySmallDto> findAllByFilters(String name, String state) {
+        return categoryRepository.findAllByFilters(name, state)
+                .stream()
+                .map(categoryMapper::toSmallDto)
+                .toList();
+    }
+
 
 }

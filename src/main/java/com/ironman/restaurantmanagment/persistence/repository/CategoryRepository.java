@@ -1,6 +1,7 @@
 package com.ironman.restaurantmanagment.persistence.repository;
 
 // Para importar la ENTITY
+
 import com.ironman.restaurantmanagment.persistence.entity.Category;
 // Para usar la implementación CRUD de Spring
 import org.springframework.data.jpa.repository.Query;
@@ -11,13 +12,20 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface CategoryRepository extends ListCrudRepository<Category,Long> {
+public interface CategoryRepository extends ListCrudRepository<Category, Long> {
 
     List<Category> findByStateOrderByIdDesc(String state);   // findBy - Population - GreaterThan
 
-    @Query(value=" SELECT c FROM Category AS c " +
+    @Query(value = " SELECT c FROM Category AS c " +
             "WHERE UPPER(c.name) " +
             "LIKE UPPER(CONCAT('%',:name,'%'))" +
             "ORDER BY c.id DESC")
     List<Category> fndByName(@Param("name") String name);
+
+
+    @Query(value = "SELECT c FROM Category AS c"
+            + " WHERE ( :#{#name} IS NULL OR UPPER(c.name) LIKE UPPER(CONCAT('%',:name,'%')) )"
+            + " AND ( :#{#state} IS NULL OR UPPER(c.state) = UPPER(:state) )"
+    )
+    List<Category> findAllByFilters(@Param("name") String name, @Param("state") String state);
 }
