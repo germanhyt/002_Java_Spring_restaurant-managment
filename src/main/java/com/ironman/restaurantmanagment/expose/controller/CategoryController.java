@@ -1,28 +1,32 @@
 package com.ironman.restaurantmanagment.expose.controller;
 
+import com.ironman.restaurantmanagment.application.dto.category.CategoryBodyDto;
 import com.ironman.restaurantmanagment.application.dto.category.CategoryDto;
+import com.ironman.restaurantmanagment.application.dto.category.CategorySavedDto;
 import com.ironman.restaurantmanagment.application.dto.category.CategorySmallDto;
 import com.ironman.restaurantmanagment.application.service.CategoryService;
 import com.ironman.restaurantmanagment.persistence.entity.Category;
 import com.ironman.restaurantmanagment.persistence.repository.CategoryRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//- Lombok Annotation
+// Genera un constructor con todos los argumentos
+@RequiredArgsConstructor
+//- Spring Stereotype Annotation
 // Para RESTAPI
 @RestController
 // Para DEFINIR LA RUTA PARA ACCEDER AL CONTROLADOR
 @RequestMapping("/categories")
 public class CategoryController {
 
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
+//    public CategoryController(CategoryService categoryService) {
+//        this.categoryService = categoryService;
+//    }
 
     @GetMapping
     public List<CategorySmallDto> findAll() {
@@ -32,6 +36,22 @@ public class CategoryController {
     @GetMapping("/{id}")
     public CategoryDto findById(@PathVariable("id") Long id) {
         return categoryService.findById(id);
+    }
+
+    @PostMapping
+    public CategorySavedDto create(@RequestBody CategoryBodyDto categoryBodyDto) {
+        return categoryService.create(categoryBodyDto);
+    }
+
+    //    @PathVariable("id") // Para obtener el id de la URL
+    @PutMapping("/{id}")
+    public CategorySavedDto update(@PathVariable("id") Long id, @RequestBody CategoryBodyDto categoryBodyDto) {
+        return categoryService.update(id, categoryBodyDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public CategorySavedDto disable(@PathVariable("id") Long id) {
+        return categoryService.disable(id);
     }
 
 
