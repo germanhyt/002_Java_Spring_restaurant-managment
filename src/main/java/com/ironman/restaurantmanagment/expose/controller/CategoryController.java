@@ -7,6 +7,7 @@ import com.ironman.restaurantmanagment.application.dto.category.CategorySmallDto
 import com.ironman.restaurantmanagment.application.service.CategoryService;
 import com.ironman.restaurantmanagment.persistence.entity.Category;
 import com.ironman.restaurantmanagment.persistence.repository.CategoryRepository;
+import com.ironman.restaurantmanagment.shared.exception.DataNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -35,23 +36,23 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public CategoryDto findById(@PathVariable("id") Long id) {
+    public CategoryDto findById(@PathVariable("id") Long id) throws DataNotFoundException {
         return categoryService.findById(id);
     }
 
     @PostMapping
-    public CategorySavedDto create(@Valid @RequestBody CategoryBodyDto categoryBodyDto) {
+    public CategorySavedDto create(@Valid @RequestBody CategoryBodyDto categoryBodyDto) throws DataNotFoundException{
         return categoryService.create(categoryBodyDto);
     }
 
     //    @PathVariable("id") // Para obtener el id de la URL
     @PutMapping("/{id}")
-    public CategorySavedDto update(@PathVariable("id") Long id,@Valid @RequestBody CategoryBodyDto categoryBodyDto) {
+    public CategorySavedDto update(@PathVariable("id") Long id,@Valid @RequestBody CategoryBodyDto categoryBodyDto) throws DataNotFoundException  {
         return categoryService.update(id, categoryBodyDto);
     }
 
     @DeleteMapping("/{id}")
-    public CategorySavedDto disable(@PathVariable("id") Long id) {
+    public CategorySavedDto disable(@PathVariable("id") Long id) throws DataNotFoundException{
         return categoryService.disable(id);
     }
 

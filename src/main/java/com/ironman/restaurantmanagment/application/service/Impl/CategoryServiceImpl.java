@@ -8,12 +8,14 @@ import com.ironman.restaurantmanagment.application.mapper.CategoryMapper;
 import com.ironman.restaurantmanagment.application.service.CategoryService;
 import com.ironman.restaurantmanagment.persistence.entity.Category;
 import com.ironman.restaurantmanagment.persistence.repository.CategoryRepository;
+import com.ironman.restaurantmanagment.shared.exception.DataNotFoundException;
 import com.ironman.restaurantmanagment.shared.state.enums.State;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Supplier;
 
 // Lombok Annotation
 @RequiredArgsConstructor
@@ -28,20 +30,21 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategorySmallDto> findAll() {
 
 //        3. Progra Funcional
-        return  categoryRepository.findAll()
+        return categoryRepository.findAll()
                 .stream()
                 .map(category -> categoryMapper.toSmallDto(category))
                 .toList();
     }
 
     @Override
-    public CategoryDto findById(Long id) {
+    public CategoryDto findById(Long id) throws DataNotFoundException {
 
 //        2. Progra Funcional
         return categoryRepository.findById(id)
                 .map(categoryMapper::toDto)
-                .orElse(null);
+                .orElseThrow(()->categoryGetDataNotFoundException(id));
     }
+
 
     @Override
     public CategorySavedDto create(CategoryBodyDto categoryBodyDto) {
@@ -55,9 +58,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategorySavedDto update(Long id, CategoryBodyDto categoryBodyDto) {
+    public CategorySavedDto update(Long id, CategoryBodyDto categoryBodyDto) throws DataNotFoundException {
 
-        Category category = categoryRepository.findById(id).get();
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> categoryGetDataNotFoundException(id));
+        ;
         categoryMapper.updateEntity(category, categoryBodyDto);
         category.setUpdateTime(LocalDateTime.now());
 
@@ -69,9 +74,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategorySavedDto disable(Long id) {
+    public CategorySavedDto disable(Long id) throws DataNotFoundException {
 
-        Category category = categoryRepository.findById(id).get();
+        Category category = categoryRepository.findById(id).orElseThrow(() -> categoryGetDataNotFoundException(id));
         category.setState(State.DISABLED.getValue());  // Eliminación Lógica
 
         return categoryMapper.toSavedDto(categoryRepository.save(category));
@@ -79,10 +84,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategorySmallDto> findByState(String state) {
-       return categoryRepository.findByStateOrderByIdDesc(state)
-               .stream() // Para convertir a Stream
-               .map(categoryMapper::toSmallDto) // Para convertir a CategorySmallDto
-               .toList();  // Para convertir a List
+        return categoryRepository.findByStateOrderByIdDesc(state)
+                .stream() // Para convertir a Stream
+                .map(categoryMapper::toSmallDto) // Para convertir a CategorySmallDto
+                .toList();  // Para convertir a List
     }
 
     @Override
@@ -102,4 +107,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
 
+    private DataNotFoundException categoryGetDataNotFoundException(Long id) {
+        return new DataNotFoundException("Category not found with id: " + id);
+    }
 }
