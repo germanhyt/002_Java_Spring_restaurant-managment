@@ -59,6 +59,10 @@ public class CategoryController {
         return categoryService.findByState(state);
     }
 
+    @GetMapping("/name/{name}")
+    public List<CategorySmallDto> fndByName(@PathVariable("name") String name) {
+        return categoryService.fndByName(name);
+    }
 
 //    private CategoryRepository categoryRepository;
 //

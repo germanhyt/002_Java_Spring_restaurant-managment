@@ -85,5 +85,13 @@ public class CategoryServiceImpl implements CategoryService {
                .toList();  // Para convertir a List
     }
 
+    @Override
+    public List<CategorySmallDto> fndByName(String name) {
+        return categoryRepository.fndByName(name)
+                .stream()
+                .map(categoryMapper::toSmallDto)
+                .toList();
+    }
+
 
 }
