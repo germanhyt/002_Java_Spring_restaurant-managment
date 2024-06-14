@@ -2,8 +2,6 @@ package com.ironman.restaurantmanagment.expose.controller;
 
 import com.ironman.restaurantmanagment.application.dto.category.*;
 import com.ironman.restaurantmanagment.application.service.CategoryService;
-import com.ironman.restaurantmanagment.persistence.entity.Category;
-import com.ironman.restaurantmanagment.persistence.repository.CategoryRepository;
 import com.ironman.restaurantmanagment.shared.constants.StatusCode;
 import com.ironman.restaurantmanagment.shared.exception.DataNotFoundException;
 import com.ironman.restaurantmanagment.shared.exception.model.ArgumentNotValidError;
@@ -14,9 +12,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +39,7 @@ public class CategoryController {
     // Pagination
     @ApiResponse(responseCode = StatusCode.OK, description = "List of all categories paginated")
     @GetMapping("/paginated")
-    public ResponseEntity<Page<CategoryDto>> findAllPaginated(
+    public ResponseEntity<PageResponse<CategoryDto>> findAllPaginated(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
@@ -63,8 +58,8 @@ public class CategoryController {
             @RequestParam(value = "state", required = false) String state,
             @RequestParam(value = "createAtFrom", required = false) LocalDate createAtFrom,
             @RequestParam(value = "createAtTo", required = false) LocalDate createAtTo,
-            @RequestParam(value = "sortField" ,required = false) String sortField,
-            @RequestParam(value = "sortOrder" ,required = false) String sortOrder
+            @RequestParam(value = "sortField", required = false) String sortField,
+            @RequestParam(value = "sortOrder", required = false) String sortOrder
 
     ) {
         CategoryFilterDto filter = CategoryFilterDto.builder()
@@ -82,7 +77,6 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(categoryService.paginatedSearch(filter));
     }
-
 
 
     @ApiResponse(responseCode = StatusCode.OK, description = "List of all categories")
