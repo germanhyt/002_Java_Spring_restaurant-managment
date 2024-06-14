@@ -4,6 +4,7 @@ import com.ironman.restaurantmanagment.application.dto.category.*;
 import com.ironman.restaurantmanagment.application.mapper.CategoryMapper;
 import com.ironman.restaurantmanagment.application.service.CategoryService;
 import com.ironman.restaurantmanagment.persistence.entity.Category;
+import com.ironman.restaurantmanagment.persistence.enums.CategorySortField;
 import com.ironman.restaurantmanagment.persistence.repository.CategoryRepository;
 import com.ironman.restaurantmanagment.shared.exception.DataNotFoundException;
 import com.ironman.restaurantmanagment.shared.page.PageResponse;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -122,7 +124,17 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public PageResponse<CategoryDto> paginatedSearch(CategoryFilterDto filter) {
         // Variable
-        Pageable pageable = PageRequest.of(filter.getPage(), filter.getSize());
+        String column = CategorySortField.getSqlColumn(filter.getSortField());  // Columna de ordenamiento
+
+        Sort.Direction direction = Sort.Direction.fromOptionalString(filter.getSortOrder())
+                .orElse(Sort.Direction.DESC);  // Dirección del ordenamiento
+
+        Sort sort = Sort.by(direction, column);  // Ordenamiento
+
+        Pageable pageable = PageRequest.of(filter.getPage() - 1, filter.getSize(), sort);
+
+//old
+//        Pageable pageable = PageRequest.of(filter.getPage() - 1, filter.getSize());
 
         // Process
         Page<Category> categoryPage = categoryRepository.paginatedSearch(
@@ -136,14 +148,14 @@ public class CategoryServiceImpl implements CategoryService {
 
         List<CategoryDto> content = // content permite mapear la lista de categorias paginadas
                 categoryPage.getContent().stream()
-                .map(categoryMapper::toDto)
-                .toList();
+                        .map(categoryMapper::toDto)
+                        .toList();
 
         // Result
 //        return categoryPage.map(categoryMapper::toDto);
         return PageResponse.<CategoryDto>builder() // Retornamos un objeto de tipo PageResponse con los datos de la paginación
                 .content(content)
-                .number(categoryPage.getNumber())
+                .number(categoryPage.getNumber() + 1)
                 .numberOfElements(categoryPage.getNumberOfElements())
                 .size(categoryPage.getSize())
                 .totalElements(categoryPage.getTotalElements())
