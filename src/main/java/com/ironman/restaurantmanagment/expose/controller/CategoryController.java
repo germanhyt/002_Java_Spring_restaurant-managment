@@ -7,10 +7,14 @@ import com.ironman.restaurantmanagment.shared.exception.DataNotFoundException;
 import com.ironman.restaurantmanagment.shared.exception.model.ArgumentNotValidError;
 import com.ironman.restaurantmanagment.shared.exception.model.GeneralError;
 import com.ironman.restaurantmanagment.shared.page.PageResponse;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,9 +44,14 @@ public class CategoryController {
     @ApiResponse(responseCode = StatusCode.OK, description = "List of all categories paginated")
     @GetMapping("/paginated")
     public ResponseEntity<PageResponse<CategoryDto>> findAllPaginated(
+            @NotNull(message = "Page is required")
+            @Min(value = 1, message = "Page must be a positive number")
             @RequestParam(value = "page", defaultValue = "1") int page,
+
+            @NotNull(message = "Size is required")
+            @Min(value = 1, message = "Size must be a positive number")
             @RequestParam(value = "size", defaultValue = "10") int size
-    ) {
+            ) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(categoryService.findAllPaginated(page, size));
     }
@@ -51,14 +60,30 @@ public class CategoryController {
     @ApiResponse(responseCode = StatusCode.OK, description = "List of all categories paginated")
     @GetMapping("/paginated-search")
     public ResponseEntity<PageResponse<CategoryDto>> paginatedSearch(
+            @NotNull(message = "Page is required")
+            @Min(value = 1, message = "Page must be a positive number")
             @RequestParam(value = "page", defaultValue = "1") int page,
+
+            @NotNull(message = "Size is required")
+            @Min(value = 1, message = "Size must be a positive number")
             @RequestParam(value = "size", defaultValue = "10") int size,
+
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "description", required = false) String description,
+
+            @Parameter(description = "State must be A for enabled or E for disabled")
+            @Pattern(regexp = "^[AE]$", message = "State must be A for enabled or E for disabled")
             @RequestParam(value = "state", required = false) String state,
+
             @RequestParam(value = "createAtFrom", required = false) LocalDate createAtFrom,
             @RequestParam(value = "createAtTo", required = false) LocalDate createAtTo,
+
+            @Parameter(description = "Sort field must be id, name, state or createAt, but default is id")
+            @Pattern(regexp = "^(id|name|state| reateAt)$", message = "Sort field must be id, name, state or createAt, but default is id")
             @RequestParam(value = "sortField", required = false) String sortField,
+
+            @Parameter(description = "Sort order must be ASC or DESC, but default is DESC")
+            @Pattern(regexp = "^(ASC|DESC)$", message = "Sort order must be ASC or DESC, but default is DESC")
             @RequestParam(value = "sortOrder", required = false) String sortOrder
 
     ) {
