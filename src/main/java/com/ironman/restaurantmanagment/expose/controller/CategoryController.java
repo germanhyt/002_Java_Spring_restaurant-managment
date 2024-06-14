@@ -1,9 +1,6 @@
 package com.ironman.restaurantmanagment.expose.controller;
 
-import com.ironman.restaurantmanagment.application.dto.category.CategoryBodyDto;
-import com.ironman.restaurantmanagment.application.dto.category.CategoryDto;
-import com.ironman.restaurantmanagment.application.dto.category.CategorySavedDto;
-import com.ironman.restaurantmanagment.application.dto.category.CategorySmallDto;
+import com.ironman.restaurantmanagment.application.dto.category.*;
 import com.ironman.restaurantmanagment.application.service.CategoryService;
 import com.ironman.restaurantmanagment.persistence.entity.Category;
 import com.ironman.restaurantmanagment.persistence.repository.CategoryRepository;
@@ -11,16 +8,21 @@ import com.ironman.restaurantmanagment.shared.constants.StatusCode;
 import com.ironman.restaurantmanagment.shared.exception.DataNotFoundException;
 import com.ironman.restaurantmanagment.shared.exception.model.ArgumentNotValidError;
 import com.ironman.restaurantmanagment.shared.exception.model.GeneralError;
+import com.ironman.restaurantmanagment.shared.page.PageResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 //- Lombok Annotation
@@ -38,6 +40,49 @@ public class CategoryController {
 //    public CategoryController(CategoryService categoryService) {
 //        this.categoryService = categoryService;
 //    }
+
+    // Pagination
+    @ApiResponse(responseCode = StatusCode.OK, description = "List of all categories paginated")
+    @GetMapping("/paginated")
+    public ResponseEntity<Page<CategoryDto>> findAllPaginated(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(categoryService.findAllPaginated(page, size));
+    }
+
+    // Filter Advanced
+    @ApiResponse(responseCode = StatusCode.OK, description = "List of all categories paginated")
+    @GetMapping("/paginated-search")
+    public ResponseEntity<PageResponse<CategoryDto>> paginatedSearch(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "state", required = false) String state,
+            @RequestParam(value = "createAtFrom", required = false) LocalDate createAtFrom,
+            @RequestParam(value = "createAtTo", required = false) LocalDate createAtTo,
+            @RequestParam(value = "sortField" ,required = false) String sortField,
+            @RequestParam(value = "sortOrder" ,required = false) String sortOrder
+
+    ) {
+        CategoryFilterDto filter = CategoryFilterDto.builder()
+                .page(page)
+                .size(size)
+                .name(name)
+                .description(description)
+                .state(state)
+                .createAtFrom(createAtFrom)
+                .createAtTo(createAtTo)
+                .sortField(sortField)
+                .sortOrder(sortOrder)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(categoryService.paginatedSearch(filter));
+    }
+
 
 
     @ApiResponse(responseCode = StatusCode.OK, description = "List of all categories")
