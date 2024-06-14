@@ -1,5 +1,6 @@
 package com.ironman.restaurantmanagment.application.dto.category;
 
+import com.ironman.restaurantmanagment.shared.state.enums.State;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class CategoryDto {
     private String name;
     private String description;
     private String urlKey;
-    private String state;
+    private State state;
     private LocalDateTime createAt;
     private LocalDateTime updateTime;
 
